@@ -1,0 +1,25 @@
+{
+  "nodes": [
+    {
+      "id": "5",
+      "type": "input",
+      "data": {
+        "name": "dimensions",
+        "fields": ["width", "height"]
+      }
+    },
+    {
+      "id": "9",
+      "type": "output",
+      "data": {
+        "type": "image"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "5",
+      "target": "9"
+    }
+  ]
+} 

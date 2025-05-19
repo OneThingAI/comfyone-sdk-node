@@ -1,0 +1,28 @@
+{
+  "name": "comfyone-sdk",
+  "version": "1.0.0",
+  "description": "TypeScript version of ComfyOne SDK",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint . --ext .ts"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.17.47",
+    "@types/ws": "^8.18.1",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
+    "axios": "^1.9.0",
+    "eslint": "^8.57.0",
+    "form-data": "^4.0.2",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.3.3"
+  }
+}
