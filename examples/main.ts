@@ -1,11 +1,6 @@
 import { ComfyOne } from '../src';
 import {
   IOType,
-  WorkflowInput,
-  WorkflowOutput,
-  WorkflowInputPayload,
-  WorkflowOutputPayload,
-  PromptInput,
   PromptPayload,
   WorkflowPayload
 } from '../src/types/workflow';
@@ -32,12 +27,12 @@ function setupSignalHandlers() {
 async function main() {
   // Initialize API client
   const client = new ComfyOne({
-    apiKey: "your_api_key",
+    apiKey: "your_api_key_here",
     debug: true
   });
 
   // Replace with your actual instance IDs
-  const instanceIdsToRegister = new Set(["your_instance_id"]);
+  const instanceIdsToRegister = new Set(["your_instance_id_here"]);
 
   try {
     // Query available backends
@@ -68,33 +63,15 @@ async function main() {
     const ws = client.connectWebsocket();
     wsClient = ws; // Store for cleanup
 
-    // Define workflow configuration
-    const workflowInputs: WorkflowInputPayload = {
-      inputs: [
-        { id: '5', type: IOType.NUMBER, name: 'height' },
-        { id: '5', type: IOType.NUMBER, name: 'width' }
-      ]
-    };
-
-    const workflowOutputs: WorkflowOutputPayload = {
-      outputs: [
-        { id: '9', type: 'image' }
-      ]
-    };
-
     // Read workflow data from file
-    const workflowData = JSON.parse(
-      fs.readFileSync(path.join(__dirname, 'test_flow.json'), 'utf-8')
-    );
+    const workflowData = JSON.parse(fs.readFileSync(path.join(__dirname, 'test_flow.json'), 'utf-8').toString().trim());
 
     const workflowPayload: WorkflowPayload = {
       name: "test",
-      description: "Test workflow for image generation",
-      config: {
-        inputs: workflowInputs,
-        outputs: workflowOutputs,
-        workflow: workflowData
-      }
+      inputs: [{id: '5', type: IOType.NUMBER, name: 'height'},
+           {id: '5', type: IOType.NUMBER, name: 'width'}],
+      outputs: ['9'],
+      workflow: workflowData
     };
 
     // Set up WebSocket message handlers
@@ -108,14 +85,15 @@ async function main() {
 
     ws.addMessageHandler("finished", async (data: any) => {
       if (data.data.success) {
-        const statusResponse = await client.api.getPromptStatus(data.taskId);
         console.log('Task completed:', data);
+        const statusResponse = await client.api.getPromptStatus(data.taskId);
         console.log('Status:', statusResponse);
 
         if (statusResponse.data.images) {
           try {
             // Download results
             for (const url of statusResponse.data.images) {
+              console.log('Downloading image:', url);
               const savedPath = await client.api.downloadFile(url);
               console.log(`Downloaded result to: ${savedPath}`);
             }
@@ -132,20 +110,13 @@ async function main() {
 
     // Create workflow
     const createWorkflowResult = await client.api.createWorkflow(workflowPayload);
+    console.log('Create workflow result:', createWorkflowResult);
 
     if (createWorkflowResult.code === 0) {
       // Generate image
-      const promptInput: PromptInput = {
-        id: "5",
-        params: {
-          width: 1024,
-          height: 1024
-        }
-      };
-
       const promptPayload: PromptPayload = {
         workflow_id: createWorkflowResult.data.id,
-        inputs: [promptInput]
+        inputs: [{id: '5', params: {width: 1024, height: 1024}}] 
       };
 
       const promptResult = await client.api.prompt(promptPayload);

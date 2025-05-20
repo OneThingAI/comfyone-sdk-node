@@ -6,15 +6,14 @@ export interface APIResponse {
 
 export interface WorkflowPayload {
   name: string;
-  description?: string;
-  config: Record<string, any>;
-  [key: string]: any;
+  inputs: any;
+  outputs: any;
+  workflow: any;
 }
 
 export interface PromptPayload {
   workflow_id: string;
-  inputs: Record<string, any>;
-  [key: string]: any;
+  inputs: any;
 }
 
 export interface WebSocketMessage {

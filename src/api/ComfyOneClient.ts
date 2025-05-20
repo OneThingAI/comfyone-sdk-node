@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { APIResponse, WorkflowPayload, PromptPayload } from '../types';
 import { APIError, AuthenticationError, ConnectionError } from '../errors';
+import util from 'util';
 
 export class ComfyOneClient {
   protected apiKey: string;
@@ -57,27 +58,27 @@ export class ComfyOneClient {
             }
           });
         } else {
-          console.log(`Request details:`, {
+          const requestDetails = {
             method,
             url: api,
-            data: payload
-          });
-          if (method === 'POST') {
+            ...(method !== 'GET' && payload && { data: payload })
+          };
+          
+          console.log(`Request details:`, requestDetails);
+          
+          if (method === 'POST' && payload) {
             console.log('Payload details:');
             for (const [key, value] of Object.entries(payload)) {
               console.log(`${key} (${typeof key}) ${value} (${typeof value})`);
             }
+            console.log('Payload:', util.inspect(payload, { depth: null, colors: true }));
             response = await this.client.post(api, payload, {
               headers: {
                 'Content-Type': 'application/json'
               }
             });
           } else {
-            response = await this.client.request({
-              method,
-              url: api,
-              data: payload
-            });
+            response = await this.client.request(requestDetails);
           }
         }
 
@@ -159,7 +160,7 @@ export class ComfyOneClient {
   }
 
   public async getPromptStatus(promptId: string): Promise<APIResponse> {
-    return this.requestApi(`v1/prompts/${promptId}`);
+    return this.requestApi(`v1/prompts/${promptId}/status`);
   }
 
   public async cancelPrompt(promptId: string): Promise<APIResponse> {
@@ -168,7 +169,12 @@ export class ComfyOneClient {
 
   public async downloadFile(url: string, savePath?: string): Promise<string> {
     try {
-      const response = await axios.get(url, { responseType: 'arraybuffer' });
+      const response = await axios.get(url, { 
+        responseType: 'arraybuffer',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`
+        }
+      });
       const defaultPath = path.join(process.cwd(), 'downloads', path.basename(url));
       const finalPath = savePath || defaultPath;
 

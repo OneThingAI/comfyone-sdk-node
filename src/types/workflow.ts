@@ -4,38 +4,17 @@ export enum IOType {
   BOOLEAN = 'boolean',
   IMAGE = 'image'
 }
-
-export interface WorkflowInput {
-  id: string;
-  type: IOType;
+export interface WorkflowPayload {
   name: string;
-}
-
-export interface WorkflowOutput {
-  id: string;
-  type: string;
-}
-
-export interface WorkflowInputPayload {
-  inputs: WorkflowInput[];
-}
-
-export interface WorkflowOutputPayload {
-  outputs: WorkflowOutput[];
-}
-
-export interface PromptInput {
-  id: string;
-  params: Record<string, any>;
-}
+  inputs: any;
+  outputs: any;
+  workflow: any;
+} 
 
 export interface PromptPayload {
   workflow_id: string;
-  inputs: PromptInput[];
+  inputs: any;
 }
 
-export interface WorkflowPayload {
-  name: string;
-  config: any;
-  description?: string;
-} 
+
+
