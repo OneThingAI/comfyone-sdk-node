@@ -10,6 +10,43 @@ npm install comfyone-sdk
 yarn add comfyone-sdk
 ```
 
+## Development
+
+### Building the SDK
+
+1. Clone the repository:
+```bash
+git clone https://github.com/OneThingAI/comfyone-sdk-node.git
+cd comfyone-sdk-node
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Build the SDK:
+```bash
+npm run build
+# or
+yarn build
+```
+
+This will:
+- Compile TypeScript files to JavaScript
+- Generate type definitions (.d.ts files)
+- Copy example JSON files to the dist directory
+
+### Linting
+
+```bash
+npm run lint
+# or
+yarn lint
+```
+
 ## Usage
 
 ### Basic Usage
